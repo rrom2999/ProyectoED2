@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Compresion LZW";
+}
+<div class="jumbotron">
+    <h2 class="display-3">Carga de archivo</h2>
+    <hr class="my-4">
+    <p class="lead">
+        @using (Html.BeginForm("LecturaLlenado", "LZW", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+        <p>Subir archivo</p>
+        <input type="file" name="AComprimirLZW" />
+        <hr />
+        <input type="submit" value="Subir" class="btn btn-outline-success" />
+    }
+        </p>
+        <h6>@ViewBag.Msg</h6>
+    </div>
