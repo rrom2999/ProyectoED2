@@ -43,12 +43,13 @@ namespace MVCClient.Controllers
             return View(listaUsuarios);
         }
 
-        public ActionResult Conversacion(string user)
+        public ActionResult Conversacion(string user, string texto)
 
         {
             var listaMen = new List<string>();
             listaMen.Add("Hola");
             listaMen.Add("Como estas?");
+            listaMen.Add(texto);
             return View(listaMen);
         }
 
