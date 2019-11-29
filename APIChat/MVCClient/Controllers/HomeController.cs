@@ -33,16 +33,24 @@ namespace MVCClient.Controllers
             return View();
         }
 
-        public ActionResult VerificacionUsuario()
-        {
-            return View();
-        }
-
         public ActionResult VerificacionUsuario(string name, string lastname, string username, string password)
         {
             Usuario aCrear = new Usuario();
             aCrear.Nombre = name; aCrear.Apellido = lastname; aCrear.Username = username; aCrear.Password = password;
-            return View();
+            var listaUsuarios = new List<string>();
+            listaUsuarios.Add("Boris");
+            listaUsuarios.Add("Ronald");
+            return View(listaUsuarios);
+        }
+
+        public ActionResult Conversacion(string user, string texto)
+
+        {
+            var listaMen = new List<string>();
+            listaMen.Add("Hola");
+            listaMen.Add("Como estas?");
+            listaMen.Add(texto);
+            return View(listaMen);
         }
 
         public ActionResult CreacionUser()

@@ -5,3 +5,19 @@
 
 <h2>VerificacionUsuario</h2>
 
+<table class="table">
+    <tr>
+        <th>
+            Usuarios existentes
+        </th>
+    </tr>
+    @foreach (var item in ViewData.Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink((string)item, "Conversacion", new { user = item })
+            </td>
+        </tr>
+    }
+</table>
+
