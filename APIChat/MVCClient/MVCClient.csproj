@@ -166,6 +166,7 @@
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\VerificacionUsuario.cshtml" />
     <Content Include="Views\Home\CreacionUser.cshtml" />
+    <Content Include="Views\Home\Conversacion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

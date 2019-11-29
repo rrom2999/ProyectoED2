@@ -9,8 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using APIChat.Models;
-using APIChat.Services;
 
 namespace APIChat
 {
@@ -26,12 +24,6 @@ namespace APIChat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<BasedeDatosConfig>(Configuration.GetSection(nameof(BasedeDatosConfig)));
-
-            services.AddSingleton<IBasedeDatosConfig>(sp =>
-            sp.GetRequiredService<IOptions<BasedeDatosConfig>>().Value);
-            services.AddSingleton<UserCRUD>();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

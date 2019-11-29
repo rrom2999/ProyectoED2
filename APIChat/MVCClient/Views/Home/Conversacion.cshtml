@@ -1,21 +1,20 @@
 ﻿
 @{
-    ViewBag.Title = "VerificacionUsuario";
+    ViewBag.Title = "Conversacion";
 }
 
-<h2>VerificacionUsuario</h2>
-
+<h2>Conversacion</h2>
 <table class="table">
     <tr>
         <th>
-            Usuarios existentes
+            Chat
         </th>
     </tr>
     @foreach (var item in ViewData.Model)
     {
         <tr>
             <td>
-                @Html.ActionLink((string)item, "Conversacion", new { user = item })
+                @item
             </td>
         </tr>
     }
