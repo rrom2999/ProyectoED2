@@ -1,0 +1,18 @@
+﻿<h2>Login</h2>
+<p class="lead">
+    @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <h4 class="display-3"> Ingrese a su cuenta</h4>
+        <label>User:</label>
+        <input type="text" name="USERNAME" />
+        <hr />
+        <label>Password:</label>
+        <input type="text" name="PASSWORD" />
+
+        <hr />
+        <input type="submit" value="Ingresar" class="btn btn-outline-success" />
+    }
+</p>
+<td>
+    @Html.ActionLink("Crear Cuenta Nueva", "CreacionUser")
+</td>

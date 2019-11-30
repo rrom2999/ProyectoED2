@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "Conversacion";
+}
+
+<h2>Conversacion</h2>
+<table class="table">
+    <tr>
+        <th>
+            Chat
+        </th>
+    </tr>
+    @foreach (var item in ViewData.Model)
+    {
+        <tr>
+            <td>
+                @item
+            </td>
+        </tr>
+    }
+    <p class="lead">
+        @using (Html.BeginForm("Conversasion", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <label>Mensaje:</label>
+            <input type="text" name="texto" />
+
+            <hr />
+            <input type="submit" value="Enviar" class="btn btn-outline-success" />
+        }
+    </p>
+</table>
+

@@ -1,0 +1,22 @@
+﻿<h2>Creacion de usuario</h2>
+<p class="lead">
+    @using (Html.BeginForm("CreacionUser", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <h4 class="display-3"> Ingrese los datos:</h4>
+        <label>Nombre: </label>
+        <input type="text" name="name" />
+        <label>Apellido: </label>
+        <input type="text" name="lastname" />
+
+        <hr />
+        <label>Nombre de Usuario:</label>
+        <input type="text" name="username"/>
+        <label>Contraseña:</label>
+        <input type="text" name="password"/>
+
+        <hr />
+        <input type="submit" value="Crear" class="btn btn-outline-success" />
+    }
+    <h6>@ViewBag.Msg</h6>
+</p>
+
