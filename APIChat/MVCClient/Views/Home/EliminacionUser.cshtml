@@ -1,0 +1,17 @@
+﻿<h2>Eliminacion de usuario</h2>
+<p class="lead">
+    @using (Html.BeginForm("EliminacionUser", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <h4 class="display-3"> Ingrese datos de cuenta a eliminar</h4>
+        <label>User:</label>
+        <input type="text" name="usernameE" />
+        <hr />
+        <label>Password:</label>
+        <input type="text" name="passwordE" />
+
+        <hr />
+        <input type="submit" value="Eliminar" class="btn btn-outline-success" />
+    }
+    <h6>@ViewBag.ResultadoEliminacion</h6>
+
+</p>
