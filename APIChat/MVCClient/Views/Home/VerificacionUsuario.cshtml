@@ -1,0 +1,38 @@
+﻿@model IEnumerable<MVCClient.Models.Usuario>
+
+@{
+    ViewBag.Title = "VerificacionUsuario";
+}
+
+<h2>Usuarios disponibles</h2>
+
+<h3 style="color:black" ; class="display-3">Bienvenido @Session["LoggedName"] @Session["ApellidoLoggeado"]</h3>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Username)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Enviar mensaje", "Conversacion", "Loggeado", new { id = item.ID }, null)
+            </td>
+        </tr>
+    }
+
+</table>
+

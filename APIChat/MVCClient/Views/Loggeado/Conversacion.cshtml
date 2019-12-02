@@ -1,0 +1,40 @@
+﻿@model IEnumerable<MVCClient.Models.Conversaciones>
+
+@{
+    ViewBag.Title = "Conversacion";
+}
+
+<h2>Usuarios disponibles</h2>
+
+<table class="table">
+
+    @*@foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserEmisor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mensaje)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hora)
+            </td>
+            <td>
+                @Html.ActionLink("Borrar mensaje", "Conversacion", new { id = item.ID })
+            </td>
+        </tr>
+    }*@
+    <p class="lead">
+        @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <label>Mensaje:</label>
+            <input type="text" name="texto" />
+
+            <hr />
+            <input type="submit" value="Enviar" class="btn btn-outline-success" />
+        }
+    </p>
+
+
+</table>
