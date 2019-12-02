@@ -12,13 +12,14 @@
         <hr />
         <input type="submit" value="Ingresar" class="btn btn-outline-success" />
     }
-    
-    <td>
-        @Html.ActionLink("Crear Cuenta Nueva", "CreacionUser")
-        <hr />
-        @Html.ActionLink("Eliminacion de usuario", "EliminacionUser")
-    </td>
 </p>
+<td>
+    @Html.ActionLink("Crear Cuenta Nueva", "CreacionUser")
+    <hr />
+    @Html.ActionLink("Eliminacion de usuario", "EliminacionUser")
+    <hr />
+    @Html.ActionLink("Modificacion de usuario", "ModificacionUser")
+</td>
 @if(ViewBag.MensajeLogin != null)
 {
     <script type="text/javascript">

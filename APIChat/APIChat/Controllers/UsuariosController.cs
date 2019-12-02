@@ -35,10 +35,6 @@ namespace APIChat.Controllers
 
             return usuario;
         }
-
-        
-        
-
         [HttpPost]
         public ActionResult<Usuario> Create(Usuario usuario)
         {

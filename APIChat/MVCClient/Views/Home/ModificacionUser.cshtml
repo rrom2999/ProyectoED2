@@ -1,8 +1,8 @@
-﻿<h2>Creacion de usuario</h2>
+﻿<h2>Modificacion de usuario</h2>
 <p class="lead">
-    @using (Html.BeginForm("CreacionUser", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("ModificacionUser", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-        <h4 class="display-3"> Ingrese los datos:</h4>
+        <h4 class="display-3"> Ingrese los datos de cuenta:</h4>
         <label>Nombre: </label>
         <input type="text" name="name" />
         <label>Apellido: </label>
@@ -17,6 +17,6 @@
         <hr />
         <input type="submit" value="Crear" class="btn btn-outline-success" />
     }
-    <h6>@ViewBag.MensajeCreacion</h6> 
+    <h6>@ViewBag.ResultadoModificacion</h6>
 </p>
 

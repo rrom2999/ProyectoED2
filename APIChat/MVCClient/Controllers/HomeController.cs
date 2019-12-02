@@ -13,29 +13,11 @@ namespace MVCClient.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
         public ActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         public ActionResult Login(string USERNAME, string PASSWORD)
         {
@@ -89,7 +71,7 @@ namespace MVCClient.Controllers
                 httpClient.BaseAddress = new Uri("http://localhost:57877/");
                 
                 var responseTask = httpClient.GetAsync($"Usuarios/GetUser/{username}").Result;
-
+                
                 if (responseTask.IsSuccessStatusCode)
                 {
                     var readTask = responseTask.Content.ReadAsAsync<Usuario>();
@@ -109,18 +91,18 @@ namespace MVCClient.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.MensajeLogin = "Creacion usuario exitosa";
+                        ViewBag.MensajeLogin = "Creacion de usuario exitosa";
                         return RedirectToAction("Login");
                     }
                     else
                     {
-                        
+                        ViewBag.MensajeCreacion = "Creacion de usuario fallida";
                         return View();
                     }
                 }
                 else
                 {
-                    ViewBag.ResultadoCreacion = "El Usuario ya existe";
+                    ViewBag.MensajeCreacion = "El Usuario ya existe";
                     return View();
                 }
             }
@@ -205,6 +187,7 @@ namespace MVCClient.Controllers
                         
                         if (response.IsSuccessStatusCode)
                         {
+                            ViewBag.MensajeLogin = "Eliminacion realizada";
                             return RedirectToAction("Login");
                         }
                         else
@@ -214,8 +197,8 @@ namespace MVCClient.Controllers
                     }
                     else
                     {
+                        ViewBag.MensajeEliminacion = "Password incorrecto";
                         return View();
-                        //Agregar ViewBag
                     }
                 }
                 else
@@ -236,5 +219,7 @@ namespace MVCClient.Controllers
         {
             return View();
         }
+
+        
     }
 }
