@@ -12,11 +12,18 @@
         <hr />
         <input type="submit" value="Ingresar" class="btn btn-outline-success" />
     }
-    <h6>@ViewBag.MensajeLogin</h6>
-
+    
     <td>
         @Html.ActionLink("Crear Cuenta Nueva", "CreacionUser")
-        @Html.ActionLink("Eliminacion de usuario", "EliminacioUser")
+        <hr />
+        @Html.ActionLink("Eliminacion de usuario", "EliminacionUser")
     </td>
 </p>
-
+@if(ViewBag.MensajeLogin != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            alert("@ViewBag.MensajeLogin");
+        };
+    </script>
+}
