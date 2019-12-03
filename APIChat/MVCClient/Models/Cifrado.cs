@@ -65,5 +65,332 @@ namespace MVCClient.Models
             }
             return Cifrado;
         }
+
+        public static int CalculaM(int n, int Longitud)
+        {
+            var m = 0;
+            if ((Longitud % n) == 0)
+            {
+                m = Longitud / n;
+            }
+            else
+            {
+                m = (Longitud / n) + 1;
+            }
+            return m;
+        }
+
+        public static string CompletarTexto(string texto, int m, int n)
+        {
+            var area = m * n;
+            while (texto.Length < area)
+            {
+                texto = texto + "$";
+            }
+            return texto;
+        }
+
+        //Para cifrar
+        public static void LlenarMatrizAbajo(string texto, char[,] matriz, int n, int m)
+        {
+            var contador = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    matriz[j, i] = texto[contador];
+                    contador++;
+                }
+            }
+        }
+
+        public static string LeerEspiralHorario(int m, int n, char[,] matriz)
+        {
+            int i, filaAux = 0, colAux = 0;
+            var textoCifrado = "";
+
+            while (filaAux < m && colAux < n)
+            {
+                for (i = colAux; i < n; i++)
+                {
+                    textoCifrado = textoCifrado + matriz[filaAux, i];
+                }
+                filaAux++;
+
+
+                for (i = filaAux; i < m; i++)
+                {
+                    textoCifrado = textoCifrado + matriz[i, n - 1];
+                }
+                n--;
+
+
+                if (filaAux < m)
+                {
+                    for (i = n - 1; i >= colAux; i--)
+                    {
+                        textoCifrado = textoCifrado + matriz[m - 1, i];
+                    }
+                    m--;
+                }
+
+
+                if (colAux < n)
+                {
+                    for (i = m - 1; i >= filaAux; i--)
+                    {
+                        textoCifrado = textoCifrado + matriz[i, colAux];
+                    }
+                    colAux++;
+                }
+            }
+            return textoCifrado;
+        }
+
+        public static void LlenarMatrizAlLado(string texto, char[,] matriz, int n, int m)
+        {
+            var contador = 0;
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    matriz[i, j] = texto[contador];
+                    contador++;
+                }
+            }
+        }
+
+        public static string LeerEspiralAntiHorario(int m, int n, char[,] matriz)
+        {
+            int i, filaAux = 0, colAux = 0;
+            var textoCifrado = "";
+
+            while (filaAux < m && colAux < n)
+            {
+                for (i = filaAux; i < m; i++)
+                {
+                    textoCifrado = textoCifrado + matriz[i, colAux];
+                }
+                colAux++;
+
+                for (i = colAux; i < n; i++)
+                {
+                    textoCifrado = textoCifrado + matriz[m - 1, i];
+                }
+                m--;
+
+                if (colAux < n)
+                {
+                    for (i = m - 1; i >= filaAux; i--)
+                    {
+                        textoCifrado = textoCifrado + matriz[i, n - 1];
+                    }
+                    n--;
+                }
+
+                if (filaAux < m)
+                {
+                    for (i = n - 1; i >= colAux; i--)
+                    {
+                        textoCifrado = textoCifrado + matriz[filaAux, i];
+                    }
+                    filaAux++;
+                }
+            }
+            return textoCifrado;
+        }
+
+        //Para descifrar
+        public static char[,] AgregarEnEspiralHorario(int m, int n, string textoCifrado)
+        {
+            int i, filaAux = 0, colAux = 0, contador = 0; ;
+            var matrizDescifrado = new char[m, n];
+
+            while (filaAux < m && colAux < n)
+            {
+                for (i = colAux; i < n; i++)
+                {
+                    matrizDescifrado[filaAux, i] = textoCifrado[contador];
+                    contador++;
+                }
+                filaAux++;
+
+
+                for (i = filaAux; i < m; i++)
+                {
+                    matrizDescifrado[i, n - 1] = textoCifrado[contador];
+                    contador++;
+                }
+                n--;
+
+
+                if (filaAux < m)
+                {
+                    for (i = n - 1; i >= colAux; i--)
+                    {
+                        matrizDescifrado[m - 1, i] = textoCifrado[contador];
+                        contador++;
+                    }
+                    m--;
+                }
+
+
+                if (colAux < n)
+                {
+                    for (i = m - 1; i >= filaAux; i--)
+                    {
+                        matrizDescifrado[i, colAux] = textoCifrado[contador];
+                        contador++;
+                    }
+                    colAux++;
+                }
+            }
+            return matrizDescifrado;
+        }
+
+        public static string LeerMatrizAbajo(char[,] matrizCifrada, int n, int m)
+        {
+            var textoDescifrado = "";
+            var txt = "";
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    txt = txt + matrizCifrada[j, i];
+                }
+            }
+            foreach (var item in txt)
+            {
+                if (item != '$')
+                {
+                    textoDescifrado = textoDescifrado + item;
+                }
+            }
+            return textoDescifrado;
+        }
+
+        public static char[,] AgregarEnEspiralAntiHorario(int m, int n, string textoCifrado)
+        {
+            int i, filaAux = 0, colAux = 0, contador = 0; ;
+            var matrizDescifrado = new char[m, n];
+
+            while (filaAux < m && colAux < n)
+            {
+                for (i = filaAux; i < m; i++)
+                {
+                    matrizDescifrado[i, colAux] = textoCifrado[contador];
+                    contador++;
+                }
+                colAux++;
+
+                for (i = colAux; i < n; i++)
+                {
+                    matrizDescifrado[m - 1, i] = textoCifrado[contador];
+                    contador++;
+                }
+                m--;
+
+                if (colAux < n)
+                {
+                    for (i = m - 1; i >= filaAux; i--)
+                    {
+                        matrizDescifrado[i, n - 1] = textoCifrado[contador];
+                        contador++;
+                    }
+                    n--;
+                }
+
+                if (filaAux < m)
+                {
+                    for (i = n - 1; i >= colAux; i--)
+                    {
+                        matrizDescifrado[filaAux, i] = textoCifrado[contador];
+                        contador++;
+                    }
+                    filaAux++;
+                }
+            }
+            return matrizDescifrado;
+        }
+
+        public static string LeerMatrizAlLado(char[,] matrizCifrada, int n, int m)
+        {
+            var textoDescifrado = "";
+            var txt = "";
+
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    txt = txt + matrizCifrada[i, j];
+                }
+            }
+            foreach (var item in txt)
+            {
+                if (item != '$')
+                {
+                    textoDescifrado = textoDescifrado + item;
+                }
+            }
+
+            return textoDescifrado;
+        }
+
+        public static string CifrarHorario(string texto, int n)
+        {
+            var m = 0;
+            m = CalculaM(n, texto.Length);
+            var matrizCifrado = new char[m, n];
+            var txtCif = "";
+            texto = CompletarTexto(texto, m, n);
+
+            LlenarMatrizAbajo(texto, matrizCifrado, n, m);
+            txtCif = LeerEspiralHorario(m, n, matrizCifrado);
+
+            return txtCif;
+        }
+
+        public static string DescifrarHorario(string textoCif, int n)
+        {
+            var m = 0;
+            m = CalculaM(n, textoCif.Length);
+            var matrizDescifrado = new char[m, n];
+            var txtDesCif = "";
+
+            textoCif = CompletarTexto(textoCif, m, n);
+            matrizDescifrado = AgregarEnEspiralAntiHorario(n, m, textoCif);
+            txtDesCif = LeerMatrizAlLado(matrizDescifrado, m, n);
+
+            return txtDesCif;
+        }
+
+        public static string CifrarAntiHorario(string texto, int n)
+        {
+            var m = 0;
+            m = CalculaM(n, texto.Length);
+            var matrizCifrado = new char[m, n];
+            var txtCif = "";
+
+            texto = CompletarTexto(texto, m, n);
+            LlenarMatrizAlLado(texto, matrizCifrado, n, m);
+            txtCif = LeerEspiralAntiHorario(m, n, matrizCifrado);
+
+            return txtCif;
+        }
+
+        public static string DescifrarAntiHorario(string textoCif, int n)
+        {
+            var m = 0;
+            m = CalculaM(n, textoCif.Length);
+            var matrizDescifrado = new char[m, n];
+            var txtDesCif = "";
+
+            textoCif = CompletarTexto(textoCif, m, n);
+            matrizDescifrado = AgregarEnEspiralHorario(n, m, textoCif);
+            txtDesCif = LeerMatrizAbajo(matrizDescifrado, m, n);
+
+            return txtDesCif;
+        }
     }
 }
