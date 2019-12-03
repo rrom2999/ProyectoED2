@@ -10,7 +10,7 @@ using APIChat.Services;
 
 namespace APIChat.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ConversacionesController : ControllerBase
     {
@@ -48,7 +48,7 @@ namespace APIChat.Controllers
         [HttpPost]
         public ActionResult<Conversaciones> Create(Conversaciones men)
         {
-            conCRUD.Insertar(men);
+            conCRUD.Create(men);
             return CreatedAtRoute("GetMensajes", new { id = men.ID.ToString() }, men.Mensaje);
         }
 

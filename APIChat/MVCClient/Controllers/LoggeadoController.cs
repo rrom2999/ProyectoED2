@@ -21,20 +21,8 @@ namespace MVCClient.Controllers
         {
             if (id != string.Empty)
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("http://localhost:50026/");
-
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    HttpResponseMessage responseTask = client.GetAsync($"Usuarios/GetUserByID/{id}").Result;
-
-                    var readTask = responseTask.Content.ReadAsAsync<Usuario>();
-                    readTask.Wait();
-
-                    usuarioLoggeado = readTask.Result;
-                }
+                usuarioLoggeado = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{id}", "objeto");
+                APIConnection.Loggeado = usuarioLoggeado;
                 return View("Index", new { id = usuarioLoggeado.ID });
             }
             else if (usuarioLoggeado != null)
@@ -51,28 +39,7 @@ namespace MVCClient.Controllers
         [HttpGet]
         public ActionResult Conversacion(string id)
         {
-            if (id != string.Empty)
-            {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("http://localhost:50026/");
-
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    HttpResponseMessage responseTask = client.GetAsync($"Usuarios/GetUserByID/{id}").Result; 
-
-                    var readTask = responseTask.Content.ReadAsAsync<Usuario>();
-                    readTask.Wait();
-
-                    usuarioReceptor = readTask.Result;
-                }
-            }
-            else
-            {
-                usuarioReceptor = null;
-                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-            }
+            usuarioReceptor = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{id}", "objeto");
 
             if (usuarioReceptor.Username != null)
             {
@@ -81,34 +48,16 @@ namespace MVCClient.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Server eror. Please contact administrator.");
+                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                 return RedirectToAction("Login", "Home");
             }
 
-            var mensajesCifrados = new List<Conversaciones>();
+            var mensajes = (List<Conversaciones>)APIConnection.ObteniendoMensajes($"Conversaciones/GetMensajes/{usuarioLoggeado.Username}/{usuarioReceptor.Username}");
             var mensajesDescifrados = new List<Conversaciones>();
 
-            using (var cliente = new HttpClient())
+            if (mensajes.Count > 0)
             {
-                cliente.BaseAddress = new Uri("http://localhost:50026/");
-                cliente.DefaultRequestHeaders.Accept.Clear();
-                cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage responseTask = cliente.GetAsync($"Conversaciones/GetMensajes/{usuarioLoggeado.Username}/{usuarioReceptor.Username}").Result;
-
-                if (responseTask.IsSuccessStatusCode)
-                {
-                    var readTask = responseTask.Content.ReadAsAsync<IList<Conversaciones>>();
-                    readTask.Wait();
-
-                    mensajesCifrados = (List<Conversaciones>)readTask.Result;
-                }
-                
-            }
-
-            if (mensajesCifrados.Count > 0)
-            {
-                foreach (var item in mensajesCifrados)
+                foreach (var item in mensajes)
                 {
                     if (item.Archivo == false)
                     {
@@ -122,33 +71,19 @@ namespace MVCClient.Controllers
 
                         mensajesDescifrados.Add(item);
                     }
-                    //Agregar cuando tenga archivo
-                    return View(mensajesDescifrados);
+                    //Agregar cuando tenga archivo el else
                 }
+                return View(mensajesDescifrados);
             }
-
-            return View(mensajesCifrados);
+            return View(mensajes);
         }
 
         [HttpPost]
         public ActionResult Conversacion(string mensaje, HttpPostedFileBase archivo)
         {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://localhost:50026/");
+            Usuario receptor = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{Session["UsuarioReceptorID"]}", "objeto");
 
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage responseTask = client.GetAsync($"Usuarios/GetUserByID/{Session["UsuarioReceptorID"]}").Result;
-
-                var readTask = responseTask.Content.ReadAsAsync<Usuario>();
-                readTask.Wait();
-
-                usuarioReceptor = readTask.Result;
-            }
-
-            if (usuarioReceptor.Username != null)
+            if (receptor.Username != null)
             {
                 Session["UsuarioReceptor"] = $"{usuarioReceptor.Username} {usuarioReceptor.Nombre}";
                 Session["UsuarioReceptorID"] = usuarioReceptor.ID;
@@ -159,60 +94,40 @@ namespace MVCClient.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var nuevoMensaje = new Conversaciones();
-            nuevoMensaje.UserEmisor = usuarioLoggeado.Username;
-            nuevoMensaje.UserReceptor = usuarioReceptor.Username;
-            nuevoMensaje.Hora = DateTime.Now;
+            var mensajeNuevo = new Conversaciones();
+            mensajeNuevo.UserEmisor = usuarioLoggeado.Username;
+            mensajeNuevo.UserReceptor = receptor.Username;
+            mensajeNuevo.Hora = DateTime.Now;
 
-            if (mensaje == string.Empty && archivo == null)
+            if (mensaje == "" && archivo == null)
             {
                 ViewBag.MensajeError = "Mensaje totalmente vacío, mandar algo";
-                return RedirectToAction("Conversacion", new { id = usuarioReceptor.ID });
+                return RedirectToAction("Conversacion", new { id = receptor.ID });
             }
-            else if (mensaje != string.Empty && archivo == null)
+            else if (mensaje != "" && archivo == null)
             {
-                var a = Convert.ToInt32(Convert.ToByte(nuevoMensaje.UserEmisor[0]));
-                var b = Convert.ToInt32(Convert.ToByte(nuevoMensaje.UserReceptor[0]));
+                var a = Convert.ToInt32(Convert.ToByte(mensajeNuevo.UserEmisor[0]));
+                var b = Convert.ToInt32(Convert.ToByte(mensajeNuevo.UserReceptor[0]));
                 var K = DiffieHellman.GenerandoLlave(a, b, 9);
 
-                nuevoMensaje.Archivo = false;
+                mensajeNuevo.Archivo = false;
 
                 var txtCifrado = Cifrado.CifrarHorario(mensaje, K);
 
-                nuevoMensaje.Mensaje = txtCifrado;
+                mensajeNuevo.Mensaje = txtCifrado;
             }
-            //agregar si esta vacio el mensaje pero si tiene un archivo
+            // else if mensaje == "" && archivo != null
 
-            bool envioMensaje;
+            var envioMensaje = APIConnection.EnviandoMensajes("Conversaciones", mensajeNuevo);
 
-            using (var client = new HttpClient())
+            if (envioMensaje)
             {
-                client.BaseAddress = new Uri("http://localhost:50026/");
-
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                using (var response = client.PostAsJsonAsync($"Conversaciones", nuevoMensaje)) 
-                {
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        envioMensaje = true;
-                    }
-                    else
-                    {
-                        envioMensaje = false;
-                    }
-                }
-            }
-
-            if (envioMensaje == true)
-            {
-                return RedirectToAction("Conversacion", new { id = usuarioReceptor.ID });
+                return RedirectToAction("Conversacion", new { id = receptor.ID });
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Server eror. Please contact administrator.");
-                return RedirectToAction("Conversacion", new { id = usuarioReceptor.ID });
+                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                return RedirectToAction("Conversacion", new { id = receptor.ID });
             }
         }
     }

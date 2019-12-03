@@ -20,9 +20,10 @@ namespace APIChat.Services
             ConverC = database.GetCollection<Conversaciones>(setting.NombreColeccionMensajes);
         }
 
-        public void Insertar(Conversaciones nuevo)
+        public Conversaciones Create(Conversaciones mensaje)
         {
-            ConverC.InsertOne(nuevo);
+            ConverC.InsertOne(mensaje);
+            return mensaje;
         }
 
         public List<Conversaciones> GetTodo()
@@ -53,7 +54,7 @@ namespace APIChat.Services
         }
 
         public void Update(string id, Conversaciones mensajeActualizado) =>
-            ConverC.ReplaceOne(men => men.UserReceptor == id, mensajeActualizado);
+            ConverC.ReplaceOne(men => men.ID == id, mensajeActualizado);
 
         public void DeleteOne(string id) =>
             ConverC.DeleteOne(men => men.ID == id);

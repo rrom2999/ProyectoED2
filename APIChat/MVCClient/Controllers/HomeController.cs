@@ -23,7 +23,7 @@ namespace MVCClient.Controllers
             Usuario Devuelto = new Usuario();
             using (var httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri("http://localhost:50026/");
+                httpClient.BaseAddress = new Uri(APIConnection.LocalHostPort);
 
                 var responseTask = httpClient.GetAsync($"Usuarios/GetUser/{USERNAME}").Result;
 
@@ -68,7 +68,7 @@ namespace MVCClient.Controllers
 
             using(var httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri("http://localhost:50026/");
+                httpClient.BaseAddress = new Uri(APIConnection.LocalHostPort);
                 
                 var responseTask = httpClient.GetAsync($"Usuarios/GetUser/{username}").Result;
 
@@ -116,7 +116,7 @@ namespace MVCClient.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:50026/");
+                client.BaseAddress = new Uri(APIConnection.LocalHostPort);
                 //HTTP GET
                 var responseTask = client.GetAsync("Usuarios");
                 responseTask.Wait();
@@ -151,7 +151,7 @@ namespace MVCClient.Controllers
 
             using (var httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri("http://localhost:50026/");
+                httpClient.BaseAddress = new Uri(APIConnection.LocalHostPort);
 
                 var responseTask = httpClient.GetAsync($"Usuarios/GetUser/{usernameE}").Result;
 

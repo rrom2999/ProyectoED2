@@ -31,6 +31,7 @@ namespace APIChat
             services.AddSingleton<IBasedeDatosConfig>(sp =>
                 sp.GetRequiredService<IOptions<BasedeDatosConfig>>().Value);
             services.AddSingleton<UserCRUD>();
+            services.AddSingleton<ConverCRUD>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
