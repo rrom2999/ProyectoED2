@@ -22,7 +22,7 @@
                 @Html.DisplayFor(modelItem => item.Hora)
             </td>
             <td>
-                @Html.ActionLink("Borrar mensaje", "Conversacion", new { id = item.ID })
+                @Html.ActionLink("Borrar mensaje", "Eliminar", "Loggeado", new { id = item.ID }, null)
             </td>
         </tr>
     }

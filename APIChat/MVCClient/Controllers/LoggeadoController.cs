@@ -188,5 +188,12 @@ namespace MVCClient.Controllers
                 return RedirectToAction("Conversacion", new { id = receptor.ID });
             }
         }
+
+        public ActionResult Eliminar(string id)
+        {
+            APIConnection.BorrandoMensaje($"Conversaciones/{id}");
+            usuarioReceptor = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{Session["UsuarioReceptorID"]}", "objeto");
+            return RedirectToAction("Conversacion", new { id = usuarioReceptor.ID });
+        }
     }
 }

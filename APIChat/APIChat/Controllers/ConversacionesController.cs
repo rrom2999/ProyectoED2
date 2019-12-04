@@ -52,18 +52,17 @@ namespace APIChat.Controllers
             return CreatedAtRoute("GetMensajes", new { id = men.ID.ToString() }, men.Mensaje);
         }
 
-        [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Conversaciones mensajeActualizado)
+        [HttpPut]
+        public IActionResult Update(Conversaciones mensajeActualizado)
         {
-            var mensaje = conCRUD.Get(id);
+            var usuario = conCRUD.Get(mensajeActualizado.ID);
 
-            if (mensaje == null)
+            if (usuario == null)
             {
                 return NotFound();
             }
 
-            conCRUD.Update(id, mensajeActualizado);
-
+            conCRUD.Update(mensajeActualizado.ID, mensajeActualizado);
             return NoContent();
         }
 
