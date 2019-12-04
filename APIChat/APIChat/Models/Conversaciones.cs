@@ -17,5 +17,6 @@ namespace APIChat.Models
         public string Mensaje { get; set; }
         public DateTime Hora { get; set; }
         public bool Archivo { get; set; }
+        public bool Descargado { get; set; }
     }
 }

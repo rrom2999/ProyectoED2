@@ -1,0 +1,49 @@
+Si creo el repo desde cero
+git init
+git remote add origin https://github.com/Repo/.git
+git add .
+git commit -m "Primer commit"
+git push -u origin master
+//Si lo pide, agregar el usuario y contraseña
+
+Si quiero trabajar en un repo
+git clone https://github.com/[...].git
+//Cierro el comando de git y luego abro la carpeta del repo y le doy click derecho Git Bash Here
+//Hago mis cambios
+git init
+git remote add origin https://github.com/Repo/.git
+git add .
+git commit -m "Mensaje del commit"
+git push
+
+Para clonar un branch en especifico
+•git clone --branch nombre_de_branch --single-branch https://github.com/[...].git [directory]
+
+Si tengo una solución y lo quiero poner en el repo
+•Descargar el repositorio
+git clone https://github.com/[...].git
+
+•Para saber que voy a trabajar en esa carpeta como repositorio
+git init
+
+•Para ver donde estoy
+git log --oneline --decorate --all --graph
+
+•Crear nueva rama
+git branch nombre_de_la_rama
+
+•Para movernos de rama
+git checkout nombre_de_la_rama
+
+•Para crear rama y movernos de una vez ahí
+git checkout -b nombre_de_la_rama
+
+•Para agregar los cambios con el mensaje del commit
+git add .
+git commit -m "Mensaje del commit"
+
+Para hacer el merge, debemos de estar en la rama que vamos a agregar la nueva rama
+- git merge nombre_de_la_rama_a_unir
+
+Luego de hacer el merge se puede eliminar la rama que unimos con
+- git branch -d nombre_de_la_rama_a_borrar

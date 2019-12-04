@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -102,6 +103,19 @@ namespace MVCClient.Controllers
 
                         mensajesDescifrados.Add(item);
                     }
+                    else
+                    {
+                        var split = item.Mensaje.ToString().Split('.');
+                        var dirComprimidos = Server.MapPath($"~/Comprimidos/{split[0]}.lzw");
+                        var dirDescomprimidos = Server.MapPath("~//Descomprimidos");
+                        Compresion.Descomprimir(dirComprimidos, split, dirComprimidos);
+                        if (item.Descargado == false)
+                        {
+                            item.Descargado = true;
+                            APIConnection.ActualizandoDescarga("mensajes", item);
+                            return RedirectToAction("DownloadFile", new { filename = item.Mensaje.ToString() });
+                        }
+                    }
                     //Agregar cuando tenga archivo el else
                 }
                 return View(mensajesDescifrados);
@@ -174,7 +188,26 @@ namespace MVCClient.Controllers
                 }
                 mensajeNuevo.Mensaje = Encoding.Default.GetString(txtCifrado);
             }
-            // else if mensaje == "" && archivo != null
+            else
+            {
+                if (archivo != null && archivo.ContentLength > 0)
+                {
+                    //COMPRESION HUFFMAN 
+                    var dirOriginal = Server.MapPath($"~/Cargados/{archivo.FileName}");
+                    var dirComprimidos = Server.MapPath("~//Comprimidos");
+                    archivo.SaveAs(dirOriginal);
+                    Compresion.Descomprimir(dirOriginal, archivo.FileName.Split('.'), dirComprimidos);
+                    mensajeNuevo.Archivo = true;
+                    mensajeNuevo.Descargado = false;
+                    mensajeNuevo.Mensaje = archivo.FileName;
+                    ViewBag.ResultFile = "Archivo enviado";
+                }
+                else
+                {
+                    ViewBag.MensajeError = "El archivo subido no contiene informacion";
+                    return RedirectToAction("Conversacion", new { id = receptor.ID });
+                }
+            }
 
             var envioMensaje = APIConnection.EnviandoMensajes("Conversaciones", mensajeNuevo);
 
@@ -261,6 +294,20 @@ namespace MVCClient.Controllers
                 }
             }
             return View(mensajesBuscados);
+        }
+
+        public ActionResult DownloadFile(string filename)
+        {
+            var nombre = filename.Split('.');
+            try
+            {
+                var fullpath = Path.Combine(Server.MapPath("~//Descomprimidos"), filename);
+                return File(fullpath, "Desomprimidos/lzw", $"{nombre[0]}.{nombre[1]}");
+            }
+            catch
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.Forbidden);
+            }
         }
     }
 }

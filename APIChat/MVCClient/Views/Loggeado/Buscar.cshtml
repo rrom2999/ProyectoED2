@@ -4,8 +4,8 @@
     ViewBag.Title = "Conversacion";
 }
 
-<h2>Mensajes buscados</h2>
-@Session["UsuarioReceptor"]
+<h2>Buscados en @Session["UsuarioReceptor"]</h2>
+
 
 <table class="table">
 
@@ -27,20 +27,36 @@
         </tr>
     }
     <p class="lead">
-        @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <label>Mensaje:</label>
-            <input type="text" name="mensaje" />
+        <div>
+            @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <label>Mensaje:</label>
+                <input type="text" name="mensaje" />
 
-            <hr />
-            <input type="submit" value="Enviar" class="btn btn-outline-success" />
-        }
-        @using (Html.BeginForm("Buscar", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <h4>Búsqueda de mensajes: </h4>
-            <input type="text" name="palabra" /><br />
-            <input type="submit" value="Subir" class="btn btn-outline-success" />
-        }
+                <input type="submit" value="Enviar" class="btn btn-outline-success" />
+                <hr />
+            }
+        </div>
+        <div>
+            @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <label>Archivo:</label>
+                <input type="file" name="file" />
+
+                <input type="submit" value="Enviar Archivo" class="btn btn-outline-success" />
+                <hr />
+            }
+        </div>
+        <div>
+            @using (Html.BeginForm("Buscar", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <h4>Búsqueda de mensajes: </h4>
+                <input type="text" name="palabra" />
+                <input type="submit" value="Buscar" class="btn btn-outline-success" />
+                <hr />
+            }
+        </div>
+
     </p>
 
 </table>
