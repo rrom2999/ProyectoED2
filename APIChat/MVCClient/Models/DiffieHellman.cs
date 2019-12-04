@@ -7,7 +7,7 @@ namespace MVCClient.Models
 {
     public class DiffieHellman
     {
-        static int P = 23;
+        static int P = 19;
 
         public static int MOD(int bas, int exponente, int mod)
         {

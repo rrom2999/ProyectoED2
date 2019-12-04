@@ -9,7 +9,7 @@
 
 <table class="table">
 
-    @*@foreach (var item in Model)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
@@ -25,7 +25,7 @@
                 @Html.ActionLink("Borrar mensaje", "Conversacion", new { id = item.ID })
             </td>
         </tr>
-    }*@
+    }
     <p class="lead">
         @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {

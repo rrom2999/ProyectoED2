@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -66,331 +67,273 @@ namespace MVCClient.Models
             return Cifrado;
         }
 
-        public static int CalculaM(int n, int Longitud)
+        public string K1;
+        public string K2;
+        public string[,] S0 = new string[4, 4];
+        public string[,] S1 = new string[4, 4];
+
+        public string[] ObtenerPermutaciones(string Ruta)
         {
-            var m = 0;
-            if ((Longitud % n) == 0)
+            string[] permutaciones = new string[5];
+            var cadena = string.Empty;
+            using (var stream = new FileStream(Ruta, FileMode.Open))
             {
-                m = Longitud / n;
+                using (var Lector = new StreamReader(stream))
+                {
+                    while (!Lector.EndOfStream)
+                    {
+                        cadena = Lector.ReadLine();
+                    }
+                }
+            }
+            permutaciones = cadena.Split('@');
+            return permutaciones;
+        }
+
+        public string P10(string Binario, string Secuencia)
+        {
+            string Nuevo = "";
+            if (Binario.Length < 10) Binario.PadLeft(10, '0');
+
+            for (int i = 0; i < 10; i++)
+            {
+                int Posicion = Convert.ToInt32(Convert.ToString(Secuencia[i]));
+                Nuevo = $"{Nuevo}{Binario[Posicion]}";
+            }
+            return Nuevo;
+        }
+
+        public string P8(string Binario, string Secuencia)
+        {
+            var Nuevo = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                int Posicion = Convert.ToInt32(Convert.ToString(Secuencia[i]));
+                Nuevo = $"{Nuevo}{Binario[Posicion]}";
+            }
+
+            return Nuevo;
+        }
+
+        public string P4(string Binario, string Secuencia)
+        {
+            var Nuevo = "";
+
+            for (int i = 0; i < 4; i++)
+            {
+                var Posicion = Convert.ToInt32(Convert.ToString(Secuencia[i]));
+                Nuevo = $"{Nuevo}{Binario[Posicion]}";
+            }
+
+            return Nuevo;
+        }
+
+        public string EP(string Binario, string Secuencia)
+        {
+            var Nuevo = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                var Posicion = Convert.ToInt32(Convert.ToString(Secuencia[i]));
+                Nuevo = $"{Nuevo}{Binario[Posicion]}";
+            }
+
+            return Nuevo;
+        }
+
+        public string IP(string Binario, bool Inverso, string Secuencia)
+        {
+            var Nuevo = "";
+            if (!Inverso)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    var Posicion = Convert.ToInt32(Convert.ToString(Secuencia[i]));
+                    Nuevo = $"{Nuevo}{Binario[Posicion]}";
+                }
             }
             else
             {
-                m = (Longitud / n) + 1;
+                var SecuenciaInversa = "";
+                string[] VectorInverso = new string[8];
+                for (int i = 0; i < 8; i++)
+                {
+                    VectorInverso[Convert.ToInt32(Convert.ToString(Secuencia[i]))] = Convert.ToString(i);
+                }
+
+                foreach (var Valor in VectorInverso)
+                {
+                    SecuenciaInversa = $"{SecuenciaInversa}{Valor}";
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    var Posicion = Convert.ToInt32(Convert.ToString(SecuenciaInversa[i]));
+                    Nuevo = $"{Nuevo}{Binario[Posicion]}";
+                }
             }
-            return m;
+
+            return Nuevo;
         }
 
-        public static string CompletarTexto(string texto, int m, int n)
+        public string XOR(string Uno, string Dos)
         {
-            var area = m * n;
-            while (texto.Length < area)
+            var ResultadoXOR = "";
+            for (int i = 0; i < Uno.Length; i++)
             {
-                texto = texto + "$";
+                if (Uno[i] != Dos[i]) ResultadoXOR += "1";
+                else ResultadoXOR += "0";
             }
-            return texto;
+
+            return ResultadoXOR;
         }
 
-        //Para cifrar
-        public static void LlenarMatrizAbajo(string texto, char[,] matriz, int n, int m)
+        public void ObtenerKas(string Llave, string[] Secuencia)
         {
-            var contador = 0;
-            for (int i = 0; i < n; i++)
+            var Binario = P10(Llave, Secuencia[0]);
+            var ParteA = Binario.Substring(0, 5);
+            var ParteB = Binario.Substring(5, 5);
+
+            var ShifteadoUno = "";
+            var Temporal = "";
+            for (int a = 1; a < 5; a++)
             {
-                for (int j = 0; j < m; j++)
-                {
-                    matriz[j, i] = texto[contador];
-                    contador++;
-                }
+                Temporal = $"{Temporal}{ParteA[a]}";
             }
-        }
-
-        public static string LeerEspiralHorario(int m, int n, char[,] matriz)
-        {
-            int i, filaAux = 0, colAux = 0;
-            var textoCifrado = "";
-
-            while (filaAux < m && colAux < n)
+            ShifteadoUno = $"{Temporal}{ParteA[0]}"; //Primeros 5 con LS1
+            Temporal = "";
+            for (int b = 1; b < 5; b++)
             {
-                for (i = colAux; i < n; i++)
-                {
-                    textoCifrado = textoCifrado + matriz[filaAux, i];
-                }
-                filaAux++;
-
-
-                for (i = filaAux; i < m; i++)
-                {
-                    textoCifrado = textoCifrado + matriz[i, n - 1];
-                }
-                n--;
-
-
-                if (filaAux < m)
-                {
-                    for (i = n - 1; i >= colAux; i--)
-                    {
-                        textoCifrado = textoCifrado + matriz[m - 1, i];
-                    }
-                    m--;
-                }
-
-
-                if (colAux < n)
-                {
-                    for (i = m - 1; i >= filaAux; i--)
-                    {
-                        textoCifrado = textoCifrado + matriz[i, colAux];
-                    }
-                    colAux++;
-                }
+                Temporal = $"{Temporal}{ParteB[b]}";
             }
-            return textoCifrado;
-        }
+            ShifteadoUno = $"{ShifteadoUno}{Temporal}{ParteB[0]}";
+            K1 = P8(ShifteadoUno, Secuencia[1]);
 
-        public static void LlenarMatrizAlLado(string texto, char[,] matriz, int n, int m)
-        {
-            var contador = 0;
-            for (int i = 0; i < m; i++)
+            //Volver a hacer para K2 sobre ShifteadoUno
+            ParteA = ShifteadoUno.Substring(0, 5);
+            ParteB = ShifteadoUno.Substring(5, 5);
+
+            var ShifteadoDos = "";
+            Temporal = "";
+            for (int a = 2; a < 5; a++)
             {
-                for (int j = 0; j < n; j++)
-                {
-                    matriz[i, j] = texto[contador];
-                    contador++;
-                }
+                Temporal = $"{Temporal}{ParteA[a]}";
             }
-        }
-
-        public static string LeerEspiralAntiHorario(int m, int n, char[,] matriz)
-        {
-            int i, filaAux = 0, colAux = 0;
-            var textoCifrado = "";
-
-            while (filaAux < m && colAux < n)
+            ShifteadoDos = $"{Temporal}{ParteA[0]}{ParteA[1]}"; //Primeros 5 con LS2 
+            Temporal = "";
+            for (int b = 2; b < 5; b++)
             {
-                for (i = filaAux; i < m; i++)
-                {
-                    textoCifrado = textoCifrado + matriz[i, colAux];
-                }
-                colAux++;
-
-                for (i = colAux; i < n; i++)
-                {
-                    textoCifrado = textoCifrado + matriz[m - 1, i];
-                }
-                m--;
-
-                if (colAux < n)
-                {
-                    for (i = m - 1; i >= filaAux; i--)
-                    {
-                        textoCifrado = textoCifrado + matriz[i, n - 1];
-                    }
-                    n--;
-                }
-
-                if (filaAux < m)
-                {
-                    for (i = n - 1; i >= colAux; i--)
-                    {
-                        textoCifrado = textoCifrado + matriz[filaAux, i];
-                    }
-                    filaAux++;
-                }
+                Temporal = $"{Temporal}{ParteB[b]}";
             }
-            return textoCifrado;
+            ShifteadoDos = $"{ShifteadoDos}{Temporal}{ParteB[0]}{ParteB[1]}";
+            K2 = P8(ShifteadoDos, Secuencia[1]);
         }
 
-        //Para descifrar
-        public static char[,] AgregarEnEspiralHorario(int m, int n, string textoCifrado)
+        public string ObtenerDeSBoxes(string Binario)
         {
-            int i, filaAux = 0, colAux = 0, contador = 0; ;
-            var matrizDescifrado = new char[m, n];
-
-            while (filaAux < m && colAux < n)
+            var AuxFila = $"{Binario[3]}{Binario[0]}"; var AuxCol = $"{Binario[2]}{Binario[1]}"; //Al reves para facilitar la conversion a int
+            var FilaS0 = 0; var ColS0 = 0;
+            for (int i = 0; i < 2; i++)
             {
-                for (i = colAux; i < n; i++)
-                {
-                    matrizDescifrado[filaAux, i] = textoCifrado[contador];
-                    contador++;
-                }
-                filaAux++;
+                if (AuxFila[i] == '1')
+                    FilaS0 += (int)Math.Pow(2, i);
 
-
-                for (i = filaAux; i < m; i++)
-                {
-                    matrizDescifrado[i, n - 1] = textoCifrado[contador];
-                    contador++;
-                }
-                n--;
-
-
-                if (filaAux < m)
-                {
-                    for (i = n - 1; i >= colAux; i--)
-                    {
-                        matrizDescifrado[m - 1, i] = textoCifrado[contador];
-                        contador++;
-                    }
-                    m--;
-                }
-
-
-                if (colAux < n)
-                {
-                    for (i = m - 1; i >= filaAux; i--)
-                    {
-                        matrizDescifrado[i, colAux] = textoCifrado[contador];
-                        contador++;
-                    }
-                    colAux++;
-                }
+                if (AuxCol[i] == '1')
+                    ColS0 += (int)Math.Pow(2, i);
             }
-            return matrizDescifrado;
-        }
 
-        public static string LeerMatrizAbajo(char[,] matrizCifrada, int n, int m)
-        {
-            var textoDescifrado = "";
-            var txt = "";
-
-            for (int i = 0; i < n; i++)
+            AuxFila = $"{Binario[7]}{Binario[4]}"; AuxCol = $"{Binario[6]}{Binario[5]}";  //Al reves para facilitar conversion a int
+            var FilaS1 = 0; var ColS1 = 0;
+            for (int i = 0; i < 2; i++)
             {
-                for (int j = 0; j < m; j++)
-                {
-                    txt = txt + matrizCifrada[j, i];
-                }
+                if (AuxFila[i] == '1')
+                    FilaS1 += (int)Math.Pow(2, i);
+
+                if (AuxCol[i] == '1')
+                    ColS1 += (int)Math.Pow(2, i);
             }
-            foreach (var item in txt)
+
+            var ResultadoSBoxes = $"{S0[FilaS0, ColS0]}{S1[FilaS1, ColS1]}";
+            return ResultadoSBoxes;
+        }
+
+        public int CifrarByte(string ByteLeido, string[] Secuencia)
+        {
+            var Binario = IP(ByteLeido, false, Secuencia[4]); //Paso1
+
+            var ParteA = Binario.Substring(0, 4);
+            var ParteB = Binario.Substring(4, 4);
+
+            var NuevaParteB = EP(ParteB, Secuencia[3]); //Paso2
+            NuevaParteB = XOR(NuevaParteB, K1); //Paso3
+
+            var ResultadoSBoxes1 = ObtenerDeSBoxes(NuevaParteB); //Paso4
+            ResultadoSBoxes1 = P4(ResultadoSBoxes1, Secuencia[2]); //Paso5
+            var ParteC = XOR(ResultadoSBoxes1, ParteA); //Paso6
+
+            var NuevoBinario = $"{ParteB}{ParteC}";//Paso7 y Paso8
+
+            var ParteD = NuevoBinario.Substring(0, 4);
+            var ParteE = NuevoBinario.Substring(4, 4);
+
+            var NuevaParteE = EP(ParteE, Secuencia[3]); //Paso9
+            NuevaParteE = XOR(NuevaParteE, K2); //Paso10
+
+            var ResultadoSBoxes2 = ObtenerDeSBoxes(NuevaParteE); //Paso11
+            ResultadoSBoxes2 = P4(ResultadoSBoxes2, Secuencia[2]); //Paso12
+            var ParteF = XOR(ResultadoSBoxes2, ParteD); //Paso13
+
+            var Nuevo = $"{ParteF}{ParteE}"; //Paso14
+            Nuevo = IP(Nuevo, true, Secuencia[4]); //Paso15
+            char[] Arreglo = Nuevo.ToCharArray();
+            Array.Reverse(Arreglo);
+            var NuevoInt = 0;
+
+            for (int i = 0; i < Arreglo.Length; i++)
             {
-                if (item != '$')
-                {
-                    textoDescifrado = textoDescifrado + item;
-                }
+                if (Arreglo[i] == '1') NuevoInt += (int)Math.Pow(2, i);
             }
-            return textoDescifrado;
+            return NuevoInt;
         }
 
-        public static char[,] AgregarEnEspiralAntiHorario(int m, int n, string textoCifrado)
+        public int DescifrarByte(string ByteLeido, string[] Secuencia)
         {
-            int i, filaAux = 0, colAux = 0, contador = 0; ;
-            var matrizDescifrado = new char[m, n];
+            var Binario = IP(ByteLeido, false, Secuencia[4]); //Paso1
 
-            while (filaAux < m && colAux < n)
+            var ParteA = Binario.Substring(0, 4);
+            var ParteB = Binario.Substring(4, 4);
+
+            var NuevaParteB = EP(ParteB, Secuencia[3]); //Paso2
+            NuevaParteB = XOR(NuevaParteB, K2); //Paso3
+
+            var ResultadoSBoxes1 = ObtenerDeSBoxes(NuevaParteB); //Paso4
+            ResultadoSBoxes1 = P4(ResultadoSBoxes1, Secuencia[2]); //Paso5
+            var ParteC = XOR(ResultadoSBoxes1, ParteA); //Paso6
+
+            var NuevoBinario = $"{ParteB}{ParteC}";//Paso7 y Paso8
+
+            var ParteD = NuevoBinario.Substring(0, 4);
+            var ParteE = NuevoBinario.Substring(4, 4);
+
+            var NuevaParteE = EP(ParteE, Secuencia[3]); //Paso9
+            NuevaParteE = XOR(NuevaParteE, K1); //Paso10
+
+            var ResultadoSBoxes2 = ObtenerDeSBoxes(NuevaParteE); //Paso11
+            ResultadoSBoxes2 = P4(ResultadoSBoxes2, Secuencia[2]); //Paso12
+            var ParteF = XOR(ResultadoSBoxes2, ParteD); //Paso13
+
+            var Nuevo = $"{ParteF}{ParteE}"; //Paso14
+            Nuevo = IP(Nuevo, true, Secuencia[4]); //Paso15
+            char[] Arreglo = Nuevo.ToCharArray();
+            Array.Reverse(Arreglo);
+            var NuevoInt = 0;
+
+            for (int i = 0; i < Arreglo.Length; i++)
             {
-                for (i = filaAux; i < m; i++)
-                {
-                    matrizDescifrado[i, colAux] = textoCifrado[contador];
-                    contador++;
-                }
-                colAux++;
-
-                for (i = colAux; i < n; i++)
-                {
-                    matrizDescifrado[m - 1, i] = textoCifrado[contador];
-                    contador++;
-                }
-                m--;
-
-                if (colAux < n)
-                {
-                    for (i = m - 1; i >= filaAux; i--)
-                    {
-                        matrizDescifrado[i, n - 1] = textoCifrado[contador];
-                        contador++;
-                    }
-                    n--;
-                }
-
-                if (filaAux < m)
-                {
-                    for (i = n - 1; i >= colAux; i--)
-                    {
-                        matrizDescifrado[filaAux, i] = textoCifrado[contador];
-                        contador++;
-                    }
-                    filaAux++;
-                }
+                if (Arreglo[i] == '1') NuevoInt += (int)Math.Pow(2, i);
             }
-            return matrizDescifrado;
-        }
-
-        public static string LeerMatrizAlLado(char[,] matrizCifrada, int n, int m)
-        {
-            var textoDescifrado = "";
-            var txt = "";
-
-            for (int i = 0; i < m; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    txt = txt + matrizCifrada[i, j];
-                }
-            }
-            foreach (var item in txt)
-            {
-                if (item != '$')
-                {
-                    textoDescifrado = textoDescifrado + item;
-                }
-            }
-
-            return textoDescifrado;
-        }
-
-        public static string CifrarHorario(string texto, int n)
-        {
-            var m = 0;
-            m = CalculaM(n, texto.Length);
-            var matrizCifrado = new char[m, n];
-            var txtCif = "";
-            texto = CompletarTexto(texto, m, n);
-
-            LlenarMatrizAbajo(texto, matrizCifrado, n, m);
-            txtCif = LeerEspiralHorario(m, n, matrizCifrado);
-
-            return txtCif;
-        }
-
-        public static string DescifrarHorario(string textoCif, int n)
-        {
-            var m = 0;
-            m = CalculaM(n, textoCif.Length);
-            var matrizDescifrado = new char[m, n];
-            var txtDesCif = "";
-
-            textoCif = CompletarTexto(textoCif, m, n);
-            matrizDescifrado = AgregarEnEspiralAntiHorario(n, m, textoCif);
-            txtDesCif = LeerMatrizAlLado(matrizDescifrado, m, n);
-
-            return txtDesCif;
-        }
-
-        public static string CifrarAntiHorario(string texto, int n)
-        {
-            var m = 0;
-            m = CalculaM(n, texto.Length);
-            var matrizCifrado = new char[m, n];
-            var txtCif = "";
-
-            texto = CompletarTexto(texto, m, n);
-            LlenarMatrizAlLado(texto, matrizCifrado, n, m);
-            txtCif = LeerEspiralAntiHorario(m, n, matrizCifrado);
-
-            return txtCif;
-        }
-
-        public static string DescifrarAntiHorario(string textoCif, int n)
-        {
-            var m = 0;
-            m = CalculaM(n, textoCif.Length);
-            var matrizDescifrado = new char[m, n];
-            var txtDesCif = "";
-
-            textoCif = CompletarTexto(textoCif, m, n);
-            matrizDescifrado = AgregarEnEspiralHorario(n, m, textoCif);
-            txtDesCif = LeerMatrizAbajo(matrizDescifrado, m, n);
-
-            return txtDesCif;
+            return NuevoInt;
         }
     }
 }
