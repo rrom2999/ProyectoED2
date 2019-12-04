@@ -195,5 +195,72 @@ namespace MVCClient.Controllers
             usuarioReceptor = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{Session["UsuarioReceptorID"]}", "objeto");
             return RedirectToAction("Conversacion", new { id = usuarioReceptor.ID });
         }
+
+        public ActionResult Buscar(string palabra)
+        {
+            usuarioReceptor = (Usuario)APIConnection.ObtenerUsuario($"Usuarios/GetUserByID/{Session["UsuarioReceptorID"]}", "objeto");
+
+            if (usuarioReceptor.Username != null)
+            {
+                Session["UsuarioReceptor"] = $"{usuarioReceptor.Username} {usuarioReceptor.Nombre}";
+                Session["UsuarioReceptorID"] = usuarioReceptor.ID;
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Server eror. Please contact administrator.");
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mensajes = (List<Conversaciones>)APIConnection.ObteniendoMensajes($"Conversaciones/GetMensajeBuscado/{usuarioLoggeado.Username}/{usuarioReceptor.Username}/{palabra}");
+
+            var mensajesBuscados = new List<Conversaciones>();
+
+            foreach (var item in mensajes)
+            {
+                var a = Convert.ToInt32(Convert.ToByte(item.UserEmisor[0]));
+                var b = Convert.ToInt32(Convert.ToByte(item.UserReceptor[0]));
+                var g = a + b;
+                var K = DiffieHellman.GenerandoLlave(a, b, g);
+                var Llave = Convert.ToString(K, 2).PadLeft(10, '0');
+                var direccionPermutaciones = Server.MapPath($"~/Permutaciones.txt");
+                var NSDES = new Cifrado();
+                var Permutaciones = NSDES.ObtenerPermutaciones(direccionPermutaciones);
+                NSDES.ObtenerKas(Llave, Permutaciones);
+
+                NSDES.S0[0, 0] = "01"; NSDES.S0[0, 1] = "00"; NSDES.S0[0, 2] = "11"; NSDES.S0[0, 3] = "10";
+                NSDES.S0[1, 0] = "11"; NSDES.S0[1, 1] = "10"; NSDES.S0[1, 2] = "01"; NSDES.S0[1, 3] = "00";
+                NSDES.S0[2, 0] = "00"; NSDES.S0[2, 1] = "10"; NSDES.S0[2, 2] = "01"; NSDES.S0[2, 3] = "11";
+                NSDES.S0[3, 0] = "11"; NSDES.S0[3, 1] = "01"; NSDES.S0[3, 2] = "11"; NSDES.S0[3, 3] = "10";
+
+                NSDES.S1[0, 0] = "00"; NSDES.S1[0, 1] = "01"; NSDES.S1[0, 2] = "10"; NSDES.S1[0, 3] = "11";
+                NSDES.S1[1, 0] = "10"; NSDES.S1[1, 1] = "00"; NSDES.S1[1, 2] = "01"; NSDES.S1[1, 3] = "11";
+                NSDES.S1[2, 0] = "11"; NSDES.S1[2, 1] = "00"; NSDES.S1[2, 2] = "01"; NSDES.S1[2, 3] = "00";
+                NSDES.S1[3, 0] = "10"; NSDES.S1[3, 1] = "01"; NSDES.S1[3, 2] = "00"; NSDES.S1[3, 3] = "11";
+
+                var mensajeBytes = Encoding.Default.GetBytes((string)item.Mensaje);
+                var txtDescifrado = new byte[mensajeBytes.Length];
+                var contador = 0;
+
+                foreach (var bait in mensajeBytes)
+                {
+                    var ByteLeido = Convert.ToString(bait, 2); //Enviar ByteLeido a metodo para cifrar
+                    while (ByteLeido.Length < 8)
+                    {
+                        ByteLeido = $"0{ByteLeido}";
+                    }
+                    var ByteCifrado = NSDES.DescifrarByte(ByteLeido, Permutaciones);
+                    txtDescifrado[contador] = Convert.ToByte(ByteCifrado);
+                    contador++;
+                }
+
+                item.Mensaje = Encoding.Default.GetString(txtDescifrado, 0, txtDescifrado.Count());
+
+                if (Convert.ToString(item.Mensaje).Contains(palabra))
+                {
+                    mensajesBuscados.Add(item);
+                }
+            }
+            return View(mensajesBuscados);
+        }
     }
 }

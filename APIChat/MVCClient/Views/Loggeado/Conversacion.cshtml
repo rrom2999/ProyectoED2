@@ -26,16 +26,21 @@
             </td>
         </tr>
     }
-    <p class="lead">
-        @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <label>Mensaje:</label>
-            <input type="text" name="mensaje" />
+<p class="lead">
+    @using (Html.BeginForm("Conversacion", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <label>Mensaje:</label>
+        <input type="text" name="mensaje" />
 
-            <hr />
-            <input type="submit" value="Enviar" class="btn btn-outline-success" />
-        }
-    </p>
-
+        <hr />
+        <input type="submit" value="Enviar" class="btn btn-outline-success" />
+    }
+    @using (Html.BeginForm("Buscar", "Loggeado", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <h4>Búsqueda de mensajes: </h4>
+        <input type="text" name="palabra" /><br />
+        <input type="submit" value="Subir" class="btn btn-outline-success" />
+    }
+</p>
 
 </table>
